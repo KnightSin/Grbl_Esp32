@@ -47,5 +47,8 @@ extern FloatSetting* spindle_pwm_max_value;
 extern IntSetting* spindle_pwm_bit_precision;
 
 extern EnumSetting* spindle_type;
+extern EnumSetting* machineType;
+extern EnumSetting* limitSwitch;
+extern EnumSetting* limitType;
 
 extern AxisMaskSetting* stallguard_debug_mask;

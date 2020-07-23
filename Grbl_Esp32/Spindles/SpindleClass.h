@@ -37,6 +37,8 @@
 #define SPINDLE_TYPE_HUANYANG   5
 #define SPINDLE_TYPE_BESC       6
 #define SPINDLE_TYPE_10V        7
+#define SPINDLE_TYPE_XB_SERVO   8 // [XBoard]
+#define SPINDLE_TYPE_XB_EM      9 // [XBoard]
 
 #ifndef SPINDLE_CLASS_H
 #define SPINDLE_CLASS_H
@@ -124,6 +126,31 @@ class RelaySpindle : public PWMSpindle {
     void set_output(uint32_t duty);
 };
 
+// [XBoard]
+class XBoard_ElectromagnetSpindle : public PWMSpindle {
+public:
+	void init();
+	void config_message();
+	uint32_t set_rpm(uint32_t rpm);
+	void set_state(uint8_t state, uint32_t rpm);
+	void Electromagnet_Hold_Task_Init();
+};
+
+// [XBoard]
+class XBoard_ServoSpindle : public PWMSpindle {
+public:
+	void init();
+	void config_message();
+	uint32_t set_rpm(uint32_t rpm);
+	void set_state(uint8_t state, uint32_t rpm);
+
+private:
+	uint8_t output_pin;
+	uint8_t spindle_pwm_chan_num;
+	uint32_t pwm_freq;
+	uint8_t pwm_precision;
+};
+
 // this is the same as a PWM spindle but the M4 compensation is supported.
 class Laser : public PWMSpindle {
   public:
@@ -200,6 +227,8 @@ extern Spindle* spindle;
 extern NullSpindle null_spindle;
 extern PWMSpindle pwm_spindle;
 extern RelaySpindle relay_spindle;
+extern XBoard_ElectromagnetSpindle xboard_electromagnet_spindle;// [XBoard]
+extern XBoard_ServoSpindle xboard_servo_spindle;// [XBoard]
 extern Laser laser;
 extern DacSpindle dac_spindle;
 extern HuanyangSpindle huanyang_spindle;

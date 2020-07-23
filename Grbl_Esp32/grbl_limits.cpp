@@ -94,9 +94,13 @@ void limits_go_home(uint8_t cycle_mask) {
     for (idx = 0; idx < N_AXIS; idx++) {
         // Initialize step pin masks
         step_pin[idx] = get_step_pin_mask(idx);
-#ifdef COREXY
-        if ((idx == A_MOTOR) || (idx == B_MOTOR))  step_pin[idx] = (get_step_pin_mask(X_AXIS) | get_step_pin_mask(Y_AXIS));
-#endif
+// #ifdef COREXY
+//         if ((idx == A_MOTOR) || (idx == B_MOTOR))  step_pin[idx] = (get_step_pin_mask(X_AXIS) | get_step_pin_mask(Y_AXIS));
+// #endif
+        if(machineType->get() == MACHINE_COREXY)
+        {
+            if ((idx == A_MOTOR) || (idx == B_MOTOR))  step_pin[idx] = (get_step_pin_mask(X_AXIS) | get_step_pin_mask(Y_AXIS)); 
+        }
         if (bit_istrue(cycle_mask, bit(idx))) {
             // Set target based on max_travel setting. Ensure homing switches engaged with search scalar.
             max_travel = MAX(max_travel, (HOMING_AXIS_SEARCH_SCALAR) * axis_settings[idx]->max_travel->get());
@@ -115,19 +119,35 @@ void limits_go_home(uint8_t cycle_mask) {
             // Set target location for active axes and setup computation for homing rate.
             if (bit_istrue(cycle_mask, bit(idx))) {
                 n_active_axis++;
-#ifdef COREXY
-                if (idx == X_AXIS) {
-                    int32_t axis_position = system_convert_corexy_to_y_axis_steps(sys_position);
-                    sys_position[A_MOTOR] = axis_position;
-                    sys_position[B_MOTOR] = -axis_position;
-                } else if (idx == Y_AXIS) {
-                    int32_t axis_position = system_convert_corexy_to_x_axis_steps(sys_position);
-                    sys_position[A_MOTOR] = sys_position[B_MOTOR] = axis_position;
-                } else
+// #ifdef COREXY
+//                 if (idx == X_AXIS) {
+//                     int32_t axis_position = system_convert_corexy_to_y_axis_steps(sys_position);
+//                     sys_position[A_MOTOR] = axis_position;
+//                     sys_position[B_MOTOR] = -axis_position;
+//                 } else if (idx == Y_AXIS) {
+//                     int32_t axis_position = system_convert_corexy_to_x_axis_steps(sys_position);
+//                     sys_position[A_MOTOR] = sys_position[B_MOTOR] = axis_position;
+//                 } else
+//                     sys_position[Z_AXIS] = 0;
+// #else
+//                 sys_position[idx] = 0;
+// #endif
+                if(machineType->get() == MACHINE_COREXY)
+                {
+                    if (idx == X_AXIS) {
+                            int32_t axis_position = system_convert_corexy_to_y_axis_steps(sys_position);
+                            sys_position[A_MOTOR] = axis_position;
+                            sys_position[B_MOTOR] = -axis_position;
+                        } else if (idx == Y_AXIS) {
+                            int32_t axis_position = system_convert_corexy_to_x_axis_steps(sys_position);
+                            sys_position[A_MOTOR] = sys_position[B_MOTOR] = axis_position;
+                    } else
                     sys_position[Z_AXIS] = 0;
-#else
-                sys_position[idx] = 0;
-#endif
+                }else
+                {
+                    sys_position[idx] = 0;
+                }
+
                 // Set target direction based on cycle mask and homing cycle approach state.
                 // NOTE: This happens to compile smaller than any other implementation tried.
                 auto mask = homing_dir_mask->get();
@@ -157,12 +177,20 @@ void limits_go_home(uint8_t cycle_mask) {
                 for (idx = 0; idx < N_AXIS; idx++) {
                     if (axislock & step_pin[idx]) {
                         if (limit_state & bit(idx)) {
-#ifdef COREXY
-                            if (idx == Z_AXIS)  axislock &= ~(step_pin[Z_AXIS]);
-                            else  axislock &= ~(step_pin[A_MOTOR] | step_pin[B_MOTOR]);
-#else
-                            axislock &= ~(step_pin[idx]);
-#endif
+// #ifdef COREXY
+//                             if (idx == Z_AXIS)  axislock &= ~(step_pin[Z_AXIS]);
+//                             else  axislock &= ~(step_pin[A_MOTOR] | step_pin[B_MOTOR]);
+// #else
+//                             axislock &= ~(step_pin[idx]);
+// #endif
+                            if(machineType->get() == MACHINE_COREXY)
+                            {
+                                if (idx == Z_AXIS)  axislock &= ~(step_pin[Z_AXIS]);
+                                else  axislock &= ~(step_pin[A_MOTOR] | step_pin[B_MOTOR]);
+                            }else
+                            {
+                                axislock &= ~(step_pin[idx]); 
+                            }
                         }
                     }
                 }
@@ -241,20 +269,36 @@ void limits_go_home(uint8_t cycle_mask) {
 #endif
             }
 #endif
-#ifdef COREXY
-            if (idx == X_AXIS) {
-                int32_t off_axis_position = system_convert_corexy_to_y_axis_steps(sys_position);
-                sys_position[A_MOTOR] = set_axis_position + off_axis_position;
-                sys_position[B_MOTOR] = set_axis_position - off_axis_position;
-            } else if (idx == Y_AXIS) {
-                int32_t off_axis_position = system_convert_corexy_to_x_axis_steps(sys_position);
-                sys_position[A_MOTOR] = off_axis_position + set_axis_position;
-                sys_position[B_MOTOR] = off_axis_position - set_axis_position;
-            } else
-                sys_position[idx] = set_axis_position;
-#else
-            sys_position[idx] = set_axis_position;
-#endif
+// #ifdef COREXY
+//             if (idx == X_AXIS) {
+//                 int32_t off_axis_position = system_convert_corexy_to_y_axis_steps(sys_position);
+//                 sys_position[A_MOTOR] = set_axis_position + off_axis_position;
+//                 sys_position[B_MOTOR] = set_axis_position - off_axis_position;
+//             } else if (idx == Y_AXIS) {
+//                 int32_t off_axis_position = system_convert_corexy_to_x_axis_steps(sys_position);
+//                 sys_position[A_MOTOR] = off_axis_position + set_axis_position;
+//                 sys_position[B_MOTOR] = off_axis_position - set_axis_position;
+//             } else
+//                 sys_position[idx] = set_axis_position;
+// #else
+//             sys_position[idx] = set_axis_position;
+// #endif
+            if(machineType->get() == MACHINE_COREXY)
+            {
+                if (idx == X_AXIS) {
+                    int32_t off_axis_position = system_convert_corexy_to_y_axis_steps(sys_position);
+                    sys_position[A_MOTOR] = set_axis_position + off_axis_position;
+                    sys_position[B_MOTOR] = set_axis_position - off_axis_position;
+                } else if (idx == Y_AXIS) {
+                    int32_t off_axis_position = system_convert_corexy_to_x_axis_steps(sys_position);
+                    sys_position[A_MOTOR] = off_axis_position + set_axis_position;
+                    sys_position[B_MOTOR] = off_axis_position - set_axis_position;
+                } else
+                    sys_position[idx] = set_axis_position;
+            }else
+            {
+            sys_position[idx] = set_axis_position; 
+            }
         }
     }
     sys.step_control = STEP_CONTROL_NORMAL_OP; // Return step control to normal operation.
@@ -282,14 +326,26 @@ void limits_init() {
         uint8_t pin;
         if ((pin = limit_pins[i]) != UNDEFINED_PIN) {
             limit_mask |= bit(i);
-            pinMode(pin, mode);
+            if(limitSwitch->get() & (0x01<<i))pinMode(pin, mode);
             if (hard_limits->get()) {
-                attachInterrupt(pin, isr_limit_switches, CHANGE);
+                if(limitSwitch->get() & (0x01<<i))attachInterrupt(pin, isr_limit_switches, CHANGE);
             } else {
                 detachInterrupt(pin);
             }
         }
     }
+
+    grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Limit Status:X %s, Y %s, Z %s",
+    (limitSwitch->get() & (0x01<<0))?"Enable":"Disable",
+    (limitSwitch->get() & (0x01<<1))?"Enable":"Disable",
+    (limitSwitch->get() & (0x01<<2))?"Enable":"Disable"
+    );
+
+    grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Limit Type:X %s, Y %s, Z %s",
+    (limitType->get() & (0x01<<0))?"NO":"NC",
+    (limitType->get() & (0x01<<1))?"NO":"NC",
+    (limitType->get() & (0x01<<2))?"NO":"NC"
+    );
 
     // setup task used for debouncing
     limit_sw_queue = xQueueCreate(10, sizeof(int));
@@ -318,16 +374,19 @@ uint8_t limits_get_state() {
     for (int i=0; i<N_AXIS; i++) {
         uint8_t pin;
         if ((pin = limit_pins[i]) != UNDEFINED_PIN) {
-            pinMask += digitalRead(pin) << i;
+            if(limitSwitch->get() & (0x01<<i))pinMask += digitalRead(pin) << i;
         }
     }
 
-#ifdef INVERT_LIMIT_PIN_MASK // not normally used..unless you have both normal and inverted switches
-    pinMask ^= INVERT_LIMIT_PIN_MASK;
-#endif
-    if (limit_invert->get()) {
-        pinMask ^= limit_mask;
-    }
+// #ifdef INVERT_LIMIT_PIN_MASK // not normally used..unless you have both normal and inverted switches
+//     pinMask ^= INVERT_LIMIT_PIN_MASK;
+// #endif
+//     if (limit_invert->get()) {
+//         pinMask ^= limit_mask;
+//     }
+
+    pinMask ^= limitType->get();
+
     return (pinMask);
 }
 

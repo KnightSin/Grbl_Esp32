@@ -35,7 +35,8 @@
 #include "HuanyangSpindle.cpp"
 #include "BESCSpindle.cpp"
 #include "10vSpindle.cpp"
-
+#include "XBoard_ElectromagnetSpindle.cpp" // [XBoard]
+#include "XBoard_ServoSpindle.cpp" // [XBoard]
 
 // An instance of each type of spindle is created here.
 // This allows the spindle to be dynamicly switched
@@ -47,7 +48,8 @@ DacSpindle dac_spindle;
 HuanyangSpindle huanyang_spindle;
 BESCSpindle besc_spindle;
 _10vSpindle _10v_spindle;
-
+XBoard_ElectromagnetSpindle xboard_electromagnet_spindle;// [XBoard]
+XBoard_ServoSpindle xboard_servo_spindle;// [XBoard]
 
 void spindle_select() {
     
@@ -58,6 +60,14 @@ void spindle_select() {
     case SPINDLE_TYPE_RELAY:
         spindle = &relay_spindle;
         break;
+    // [XBoard]
+	case SPINDLE_TYPE_XB_EM:
+		spindle = &xboard_electromagnet_spindle;
+		break;
+	// [XBoard]
+	case SPINDLE_TYPE_XB_SERVO:
+		spindle = &xboard_servo_spindle;
+		break;
     case SPINDLE_TYPE_LASER:
         spindle = &laser;
         break;

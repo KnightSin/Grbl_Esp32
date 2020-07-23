@@ -28,6 +28,27 @@
 
 #define SOME_LARGE_VALUE 1.0E+38
 
+#define MACHINE_COREXY   0 // [XBoard]
+#define MACHINE_XYZ		 1 // [XBoard]
+
+#define LIMIT_S_NNN   0x00 // [XBoard]
+#define LIMIT_S_NNX   0x01 // [XBoard]
+#define LIMIT_S_NYN   0x02 // [XBoard]
+#define LIMIT_S_NYX   0x03 // [XBoard]
+#define LIMIT_S_ZNN   0x04 // [XBoard]
+#define LIMIT_S_ZNX   0x05 // [XBoard]
+#define LIMIT_S_ZYN   0x06 // [XBoard]
+#define LIMIT_S_ZYX   0x07 // [XBoard]
+
+#define LIMIT_T_CCC   0x00 // [XBoard]
+#define LIMIT_T_CCO   0x01 // [XBoard]
+#define LIMIT_T_COC   0x02 // [XBoard]
+#define LIMIT_T_COO   0x03 // [XBoard]
+#define LIMIT_T_OCC   0x04 // [XBoard]
+#define LIMIT_T_OCO   0x05 // [XBoard]
+#define LIMIT_T_OOC   0x06 // [XBoard]
+#define LIMIT_T_OOO   0x07 // [XBoard]
+
 // Axis array index values. Must start with 0 and be continuous.
 // Note: You set the number of axes used by changing N_AXIS.
 // Be sure to define pins or servos in the machine definition file.

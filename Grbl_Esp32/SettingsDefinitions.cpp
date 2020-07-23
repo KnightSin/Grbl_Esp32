@@ -56,6 +56,41 @@ enum_opt_t spindleTypes = {
     { "HUANYANG", SPINDLE_TYPE_HUANYANG, },
     { "BESC", SPINDLE_TYPE_BESC, },
     { "10V", SPINDLE_TYPE_10V, },
+    { "EM", SPINDLE_TYPE_XB_EM, },// [XBoard]
+    { "SERVO", SPINDLE_TYPE_XB_SERVO, },// [XBoard]
+};
+
+EnumSetting* machineType;
+
+enum_opt_t machineTypes = {
+    { "XYZ", MACHINE_XYZ},// [XBoard]
+    { "CoreXY", MACHINE_COREXY},// [XBoard]
+};
+
+EnumSetting* limitSwitch;
+// N:NC, ZYX
+enum_opt_t limitSwitchs = {
+    { "NNN", LIMIT_S_NNN},// [XBoard]
+    { "NNX", LIMIT_S_NNX},// [XBoard]
+    { "NYN", LIMIT_S_NYN},// [XBoard]
+    { "NYX", LIMIT_S_NYX},// [XBoard]
+    { "ZNN", LIMIT_S_ZNN},// [XBoard]
+    { "ZNX", LIMIT_S_ZNX},// [XBoard]
+    { "ZYN", LIMIT_S_ZYN},// [XBoard]
+    { "ZYX", LIMIT_S_ZYX},// [XBoard]  
+};
+
+EnumSetting* limitType;
+// C:NC, O:NO, ZYX
+enum_opt_t limitTypes = {
+    { "CCC", LIMIT_T_CCC},// [XBoard]
+    { "CCO", LIMIT_T_CCO},// [XBoard]
+    { "COC", LIMIT_T_COC},// [XBoard]
+    { "COO", LIMIT_T_COO},// [XBoard]
+    { "OCC", LIMIT_T_OCC},// [XBoard]
+    { "OCO", LIMIT_T_OCO},// [XBoard]
+    { "OOC", LIMIT_T_OOC},// [XBoard]
+    { "OOO", LIMIT_T_OOO},// [XBoard]  
 };
 
 AxisSettings* x_axis_settings;
@@ -312,5 +347,8 @@ void make_settings() {
     stepper_idle_lock_time = new IntSetting(GRBL, WG, "1", "Stepper/IdleTime", DEFAULT_STEPPER_IDLE_LOCK_TIME, 0, 255);
     pulse_microseconds = new IntSetting(GRBL, WG, "0", "Stepper/Pulse", DEFAULT_STEP_PULSE_MICROSECONDS, 3, 1000);
     spindle_type = new EnumSetting(NULL, EXTENDED, WG, NULL, "Spindle/Type", SPINDLE_TYPE_NONE, &spindleTypes);
+    machineType = new EnumSetting(NULL, EXTENDED, WG, NULL, "Machine/Type", MACHINE_XYZ, &machineTypes);
+    limitSwitch = new EnumSetting(NULL, EXTENDED, WG, NULL, "Limit/Switch", LIMIT_S_NNN, &limitSwitchs);
+    limitType = new EnumSetting(NULL, EXTENDED, WG, NULL, "Limit/Type", LIMIT_T_CCC, &limitTypes);
     stallguard_debug_mask = new AxisMaskSetting(EXTENDED, WG, NULL, "Report/StallGuard", 0, checkStallguardDebugMask);
 }

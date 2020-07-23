@@ -425,9 +425,13 @@ void report_build_info(char* line, uint8_t client) {
 #ifdef COOLANT_MIST_PIN
     strcat(build_info, "M"); // TODO Need to deal with M8...it could be disabled
 #endif
-#ifdef COREXY
+// #ifdef COREXY
+//     strcat(build_info, "C");
+// #endif
+if(machineType->get() == MACHINE_COREXY)
+{
     strcat(build_info, "C");
-#endif
+}
 #ifdef PARKING_ENABLE
     strcat(build_info, "P");
 #endif
@@ -706,7 +710,7 @@ void report_gcode_comment(char* comment) {
 }
 
 void report_machine_type(uint8_t client) {
-    grbl_msg_sendf(client, MSG_LEVEL_INFO, "Using machine:%s", MACHINE_NAME);
+    grbl_msg_sendf(client, MSG_LEVEL_INFO, "Using board:%s", MACHINE_NAME);
 }
 
 
