@@ -45,8 +45,9 @@ FloatSetting* spindle_pwm_min_value;
 FloatSetting* spindle_pwm_max_value;
 IntSetting* spindle_pwm_bit_precision;
 
-EnumSetting* spindle_type;
+IntSetting* xboard_em_pwm_hold_val;// [XBoard]
 
+EnumSetting* spindle_type;
 enum_opt_t spindleTypes = {
     { "NONE", SPINDLE_TYPE_NONE, },
     { "PWM", SPINDLE_TYPE_PWM, },
@@ -61,7 +62,6 @@ enum_opt_t spindleTypes = {
 };
 
 EnumSetting* machineType;
-
 enum_opt_t machineTypes = {
     { "XYZ", MACHINE_XYZ},// [XBoard]
     { "CoreXY", MACHINE_COREXY},// [XBoard]
@@ -350,5 +350,7 @@ void make_settings() {
     machineType = new EnumSetting(NULL, EXTENDED, WG, NULL, "Machine/Type", MACHINE_XYZ, &machineTypes);
     limitSwitch = new EnumSetting(NULL, EXTENDED, WG, NULL, "Limit/Switch", LIMIT_S_NNN, &limitSwitchs);
     limitType = new EnumSetting(NULL, EXTENDED, WG, NULL, "Limit/Type", LIMIT_T_CCC, &limitTypes);
+    xboard_em_pwm_hold_val = new IntSetting(EXTENDED, WG, NULL, "Spindle/EMHoldVal", 300, 0, 1024);
+
     stallguard_debug_mask = new AxisMaskSetting(EXTENDED, WG, NULL, "Report/StallGuard", 0, checkStallguardDebugMask);
 }

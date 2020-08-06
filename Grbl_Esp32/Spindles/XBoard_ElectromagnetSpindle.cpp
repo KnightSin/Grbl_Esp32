@@ -50,8 +50,8 @@ void Electromagnet_Hold_Task(void* pvParameters)
 			if (pwm_hold_taskFlag == PWM_ON)
 			{
 				ledcWrite(spindle_pwm_chan_num, pwm_hold_val);
-					pwm_hold_taskFlag = PWM_HOLD;
-					//Serial.println("PWM_HOLD");
+				pwm_hold_taskFlag = PWM_HOLD;
+				//Serial.println("PWM_HOLD");
 			}
 		}
 		vTaskDelay(10);
@@ -79,7 +79,7 @@ void XBoard_ElectromagnetSpindle::init() {
 	spindle_pwm_chan_num = 0; // Channel 0 is reserved for spindle use
 	pwm_freq = 1000.0;
 	pwm_precision = 10;
-	pwm_hold_val = 300;
+	pwm_hold_val = (uint32_t)xboard_em_pwm_hold_val->get();
 	pwm_on_val = 1024;
 	pwm_off_val = 0;
 	pwm_hold_taskFlag = PWM_ON;
