@@ -51,23 +51,31 @@ void XBoard_ServoSpindle:: config_message() {
 				   pinName(output_pin).c_str());
 }
 
+
+// 0.5ms-----0бу:  2.5% 
+// 1.0ms----45бу:  5.0% 
+// 1.5ms----90бу:  7.5%
+// 2.0ms---135бу: 10.0%
+// 2.5ms---180бу: 12.5%
+// duty = {[0.5ms + (Angle/45.0бу)*0.5ms] / 20.0ms} * pow(2, pwm_precision)
+
+uint32_t XBoard_ServoSpindle::angle2duty(float angle)
+{
+	return (uint32_t)(((0.5 + (angle/45.0)*0.5) / 20.0)*pow(2, pwm_precision));
+}
+
 uint32_t XBoard_ServoSpindle::set_rpm(uint32_t rpm) {
     if (output_pin == UNDEFINED_PIN)
         return rpm;
 
 	sys.spindle_speed = rpm;
 
-	if (rpm <= 0.0)
-	{
-		ledcWrite(spindle_pwm_chan_num, (uint16_t)(0.5 * pow(2, pwm_precision) / 20.0));
-		//Serial.printf("ledcWrite(%d);\r\n",(uint16_t)(0.5 * pow(2, pwm_precision) / 20.0));
-	}
-	if (rpm > 0)
-	{
-		rpm = 90;
-		ledcWrite(spindle_pwm_chan_num, (uint16_t)((0.5 + rpm / 90 * 2.0) * pow(2, pwm_precision) / 20.0));
-		//Serial.printf("ledcWrite(%d);\r\n", (uint16_t)((0.5 + rpm / 90 * 2.0) * pow(2, pwm_precision) / 20.0));
-	}
+	if (rpm < 1){rpm = 1;}
+	else if (rpm > xboard_servo_max_angle->get()){rpm = xboard_servo_max_angle->get();}
+
+	ledcWrite(spindle_pwm_chan_num, angle2duty(rpm));
+
+	//Serial.printf("rpm = %ld\r\n", rpm);
 
     return rpm;
 }

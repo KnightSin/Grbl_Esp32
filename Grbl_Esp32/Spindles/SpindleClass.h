@@ -145,6 +145,7 @@ public:
 	void set_state(uint8_t state, uint32_t rpm);
 
 private:
+  uint32_t angle2duty(float angle);
 	uint8_t output_pin;
 	uint8_t spindle_pwm_chan_num;
 	uint32_t pwm_freq;

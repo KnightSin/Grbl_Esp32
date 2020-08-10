@@ -349,7 +349,16 @@ int32_t system_convert_corexy_to_x_axis_steps(int32_t* steps) {
 int32_t system_convert_corexy_to_y_axis_steps(int32_t* steps) {
     return ((steps[A_MOTOR] - steps[B_MOTOR]) / 2);
 }
-
+// [XBoard]
+int32_t system_convert_bipolar_to_x_axis_steps(int32_t* steps) {
+    return ((steps[A_MOTOR] + steps[B_MOTOR]) / 2);
+}
+// [XBoard]
+int32_t system_convert_bipolar_to_y_axis_steps(int32_t* steps) {
+    return ((steps[A_MOTOR] - steps[B_MOTOR]) / 2);
+}
+//#define MACHINE_BIPOLAR_WIDTH   300 //mm [XBoard]
+//#define MACHINE_BIPOLAR_HEIGTH  100 //mm [XBoard]
 // io_num is the virtual pin# and has nothing to do with the actual esp32 GPIO_NUM_xx
 // It uses a mask so all can be turned of in ms_reset
 void sys_io_control(uint8_t io_num_mask, bool turnOn) {

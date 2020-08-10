@@ -101,6 +101,11 @@ void limits_go_home(uint8_t cycle_mask) {
         {
             if ((idx == A_MOTOR) || (idx == B_MOTOR))  step_pin[idx] = (get_step_pin_mask(X_AXIS) | get_step_pin_mask(Y_AXIS)); 
         }
+        if(machineType->get() == MACHINE_BIPOLAR)
+        {
+            if ((idx == A_MOTOR) || (idx == B_MOTOR))  step_pin[idx] = (get_step_pin_mask(X_AXIS) | get_step_pin_mask(Y_AXIS)); 
+        }
+
         if (bit_istrue(cycle_mask, bit(idx))) {
             // Set target based on max_travel setting. Ensure homing switches engaged with search scalar.
             max_travel = MAX(max_travel, (HOMING_AXIS_SEARCH_SCALAR) * axis_settings[idx]->max_travel->get());

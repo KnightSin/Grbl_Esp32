@@ -28,8 +28,13 @@
 
 #define SOME_LARGE_VALUE 1.0E+38
 
-#define MACHINE_COREXY   0 // [XBoard]
-#define MACHINE_XYZ		 1 // [XBoard]
+#define MACHINE_COREXY    0 // [XBoard]
+#define MACHINE_XYZ		    1 // [XBoard]
+#define MACHINE_BIPOLAR   2 // [XBoard]
+#define MACHINE_DOUBLEY   3 // [XBoard]
+
+#define MACHINE_BIPOLAR_WIDTH   300 //mm [XBoard]
+#define MACHINE_BIPOLAR_HEIGTH  100 //mm [XBoard]
 
 #define LIMIT_S_NNN   0x00 // [XBoard]
 #define LIMIT_S_NNX   0x01 // [XBoard]

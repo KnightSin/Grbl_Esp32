@@ -51,5 +51,6 @@ extern EnumSetting* machineType;// [XBoard]
 extern EnumSetting* limitSwitch;// [XBoard]
 extern EnumSetting* limitType;  // [XBoard]
 extern IntSetting* xboard_em_pwm_hold_val;// [XBoard]
+extern FloatSetting* xboard_servo_max_angle;// [XBoard]
 
 extern AxisMaskSetting* stallguard_debug_mask;

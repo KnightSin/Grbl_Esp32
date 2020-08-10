@@ -46,6 +46,7 @@ FloatSetting* spindle_pwm_max_value;
 IntSetting* spindle_pwm_bit_precision;
 
 IntSetting* xboard_em_pwm_hold_val;// [XBoard]
+FloatSetting* xboard_servo_max_angle;// [XBoard]
 
 EnumSetting* spindle_type;
 enum_opt_t spindleTypes = {
@@ -351,6 +352,7 @@ void make_settings() {
     limitSwitch = new EnumSetting(NULL, EXTENDED, WG, NULL, "Limit/Switch", LIMIT_S_NNN, &limitSwitchs);
     limitType = new EnumSetting(NULL, EXTENDED, WG, NULL, "Limit/Type", LIMIT_T_CCC, &limitTypes);
     xboard_em_pwm_hold_val = new IntSetting(EXTENDED, WG, NULL, "Spindle/EMHoldVal", 300, 0, 1024);
+    xboard_servo_max_angle = new FloatSetting(EXTENDED, WG, NULL, "Spindle/ServoMaxAngle", 90, 1, 180);
 
     stallguard_debug_mask = new AxisMaskSetting(EXTENDED, WG, NULL, "Report/StallGuard", 0, checkStallguardDebugMask);
 }

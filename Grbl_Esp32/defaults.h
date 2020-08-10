@@ -192,13 +192,13 @@
     // =========== 	AXIS RESOLUTION ======
 
     #ifndef  DEFAULT_X_STEPS_PER_MM
-        #define DEFAULT_X_STEPS_PER_MM 100.0
+        #define DEFAULT_X_STEPS_PER_MM 80.0
     #endif
     #ifndef  DEFAULT_Y_STEPS_PER_MM
-        #define DEFAULT_Y_STEPS_PER_MM 100.0
+        #define DEFAULT_Y_STEPS_PER_MM 80.0
     #endif
     #ifndef  DEFAULT_Z_STEPS_PER_MM
-        #define DEFAULT_Z_STEPS_PER_MM 100.0
+        #define DEFAULT_Z_STEPS_PER_MM 400.0
     #endif
     #ifndef  DEFAULT_A_STEPS_PER_MM
         #define DEFAULT_A_STEPS_PER_MM 100.0
