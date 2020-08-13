@@ -151,6 +151,7 @@ private:
 	uint32_t pwm_freq;
 	uint8_t pwm_precision;
   float max_angle;
+  bool dir_invert;
 };
 
 // this is the same as a PWM spindle but the M4 compensation is supported.

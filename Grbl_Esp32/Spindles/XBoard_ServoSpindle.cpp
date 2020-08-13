@@ -34,6 +34,7 @@ void XBoard_ServoSpindle::init() {
 	pwm_freq = 50;
 	pwm_precision = 10;
 	max_angle = xboard_servo_max_angle->get();
+	dir_invert = xboard_servo_invert->get();
 #endif
 
 	ledcSetup(spindle_pwm_chan_num, (double)pwm_freq, pwm_precision); // setup the channel
@@ -61,7 +62,10 @@ void XBoard_ServoSpindle:: config_message() {
 
 uint32_t XBoard_ServoSpindle::angle2duty(float angle)
 {
-	return (uint32_t)(((0.5 + (angle/45.0)*0.5) / 20.0)*pow(2, pwm_precision));
+	if(dir_invert == true)
+		return (uint32_t)(((0.5 + ((max_angle - angle)/45.0)*0.5) / 20.0)*pow(2, pwm_precision));
+	else
+		return (uint32_t)(((0.5 + (angle/45.0)*0.5) / 20.0)*pow(2, pwm_precision));
 }
 
 uint32_t XBoard_ServoSpindle::set_rpm(uint32_t rpm) {
