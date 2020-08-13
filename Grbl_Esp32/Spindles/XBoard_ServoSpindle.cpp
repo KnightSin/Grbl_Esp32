@@ -33,7 +33,7 @@ void XBoard_ServoSpindle::init() {
 	spindle_pwm_chan_num = 0; // Channel 0 is reserved for spindle use
 	pwm_freq = 50;
 	pwm_precision = 10;
-
+	max_angle = xboard_servo_max_angle->get();
 #endif
 
 	ledcSetup(spindle_pwm_chan_num, (double)pwm_freq, pwm_precision); // setup the channel
@@ -65,17 +65,20 @@ uint32_t XBoard_ServoSpindle::angle2duty(float angle)
 }
 
 uint32_t XBoard_ServoSpindle::set_rpm(uint32_t rpm) {
-    if (output_pin == UNDEFINED_PIN)
+    static uint32_t recoder_rpm = 0;
+	
+	if (output_pin == UNDEFINED_PIN)
         return rpm;
+
+	if(recoder_rpm == rpm)return rpm; // 不增加此部分会报错：Guru Meditation Error: Core 1 panic'ed (Coprocessor exception)
+
+	recoder_rpm = rpm;
 
 	sys.spindle_speed = rpm;
 
 	if (rpm < 1){rpm = 1;}
-	else if (rpm > xboard_servo_max_angle->get()){rpm = xboard_servo_max_angle->get();}
-
+	else if (rpm > max_angle){rpm = max_angle;}
 	ledcWrite(spindle_pwm_chan_num, angle2duty(rpm));
-
-	//Serial.printf("rpm = %ld\r\n", rpm);
 
     return rpm;
 }
