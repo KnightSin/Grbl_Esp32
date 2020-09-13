@@ -22,28 +22,28 @@
 #define ESPRESPONSE_h
 
 #if defined (ENABLE_HTTP) && defined(ENABLE_WIFI)
-    class WebServer;
+class WebServer;
 #endif
 
 class ESPResponseStream {
-  public:
-    void print(const char* data);
-    void println(const char* data);
-    void flush();
-    bool anyOutput() { return _header_sent; }
-    static String formatBytes(uint64_t bytes);
-    uint8_t client() {return _client;}
+public:
+	void print(const char* data);
+	void println(const char* data);
+	void flush();
+	bool anyOutput() { return _header_sent; }
+	static String formatBytes(uint64_t bytes);
+	uint8_t client() { return _client; }
 #if defined (ENABLE_HTTP) && defined(ENABLE_WIFI)
-    ESPResponseStream(WebServer* webserver);
+	ESPResponseStream(WebServer* webserver);
 #endif
-    ESPResponseStream(uint8_t client, bool byid = true);
-    ESPResponseStream();
-  private:
-    uint8_t _client;
-    bool _header_sent;
+	ESPResponseStream(uint8_t client, bool byid = true);
+	ESPResponseStream();
+private:
+	uint8_t _client;
+	bool _header_sent;
 #if defined (ENABLE_HTTP) && defined(ENABLE_WIFI)
-    WebServer* _webserver;
-    String _buffer;
+	WebServer* _webserver;
+	String _buffer;
 #endif
 };
 

@@ -50,7 +50,8 @@ extern EnumSetting* spindle_type;
 extern EnumSetting* machineType;// [XBoard]
 extern EnumSetting* limitSwitch;// [XBoard]
 extern EnumSetting* limitType;  // [XBoard]
-extern IntSetting* xboard_em_pwm_hold_val;// [XBoard]
+extern IntSetting* xboard_em_hold;// [XBoard]
+extern FlagSetting* xboard_em_invert;// [XBoard]
 extern FloatSetting* xboard_servo_max_angle;// [XBoard]
 extern FlagSetting* xboard_servo_invert;// [XBoard]
 

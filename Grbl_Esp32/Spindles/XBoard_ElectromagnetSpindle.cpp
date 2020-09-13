@@ -35,6 +35,7 @@ static uint8_t pwm_precision;
 static uint32_t pwm_hold_val;
 static uint32_t pwm_on_val;
 static uint32_t pwm_off_val;
+static bool pwm_invert;
 static uint32_t pwm_hold_taskFlag;
 static TaskHandle_t Electromagnet_Hold_TaskHandle = 0;
 
@@ -45,17 +46,14 @@ void Electromagnet_Hold_Task(void* pvParameters)
 	{
 		if (pwm_hold_taskFlag == PWM_ON)
 		{
-			//Serial.println("PWM_ON");
-			vTaskDelay(1000);
+			vTaskDelay(100);
 			if (pwm_hold_taskFlag == PWM_ON)
 			{
 				ledcWrite(spindle_pwm_chan_num, pwm_hold_val);
 				pwm_hold_taskFlag = PWM_HOLD;
-				//Serial.println("PWM_HOLD");
 			}
 		}
 		vTaskDelay(10);
-		//Serial.print(".");
 	}
 }
 
@@ -79,9 +77,19 @@ void XBoard_ElectromagnetSpindle::init() {
 	spindle_pwm_chan_num = 0; // Channel 0 is reserved for spindle use
 	pwm_freq = 1000.0;
 	pwm_precision = 10;
-	pwm_hold_val = (uint32_t)xboard_em_pwm_hold_val->get();
-	pwm_on_val = 1024;
-	pwm_off_val = 0;
+	pwm_invert = xboard_em_invert->get();
+	if(pwm_invert == false)
+	{
+		pwm_hold_val = (uint32_t)xboard_em_hold->get();
+		pwm_on_val = pow(2, pwm_precision);
+		pwm_off_val = 0;
+	}
+	else
+	{
+		pwm_hold_val = pow(2, pwm_precision) - (uint32_t)xboard_em_hold->get();
+		pwm_on_val = 0;
+		pwm_off_val = pow(2, pwm_precision);
+	}
 	pwm_hold_taskFlag = PWM_ON;
 #endif
 
@@ -111,11 +119,9 @@ uint32_t XBoard_ElectromagnetSpindle::set_rpm(uint32_t rpm) {
     if (rpm == 0) {
 		ledcWrite(spindle_pwm_chan_num, pwm_on_val);
 		pwm_hold_taskFlag = PWM_ON;
-		//Serial.println("rpm == 0");
     } else {
 		ledcWrite(spindle_pwm_chan_num,pwm_off_val);
 		pwm_hold_taskFlag = PWM_OFF;
-		//Serial.println("rpm != 0");
     }
 
     return rpm;

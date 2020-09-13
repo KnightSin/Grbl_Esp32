@@ -88,67 +88,179 @@ void serial_init() {
 
 // this task runs and checks for data on all interfaces
 // REaltime stuff is acted upon, then characters are added to the appropriate buffer
-void serialCheckTask(void* pvParameters) {
-    uint8_t data = 0;
-    uint8_t client = CLIENT_ALL; // who sent the data
-    while (true) { // run continuously
-        while (any_client_has_data()) {
-            if (Serial.available()) {
-                client = CLIENT_SERIAL;
-                data = Serial.read();
-            } else if (inputBuffer.available()) {
-                client = CLIENT_INPUT;
-                data = inputBuffer.read();
-            } else {
-                //currently is wifi or BT but better to prepare both can be live
+void serialCheckTask(void * pvParameters)
+{
+	uint8_t data = 0;
+	uint8_t client = CLIENT_ALL; // who sent the data
+	while (true)    // run continuously
+	{
+		while (any_client_has_data())
+		{
+			if (Serial.available())
+			{
+				data = 0;
+				while (Serial.available() && data != '\n')
+				{
+					client = CLIENT_SERIAL;
+					data = Serial.read();
+					if (is_realtime_command(data))
+					{
+						execute_realtime_command(data, client);
+					}
+					else
+					{
+						vTaskEnterCritical(&myMutex);
+						if (client_buffer[client].write(data) == 0)
+						{
+							report_status_message(STATUS_OVERFLOW, client);
+							client_buffer[client].end();
+						}
+						vTaskExitCritical(&myMutex);
+					}
+				}
+			}
+			else if (inputBuffer.available())
+			{
+				data = 0;
+				while (inputBuffer.available() && data != '\n')
+				{
+					client = CLIENT_INPUT;
+					data = inputBuffer.read();
+					if (is_realtime_command(data))
+					{
+						execute_realtime_command(data, client);
+					}
+					else
+					{
+						vTaskEnterCritical(&myMutex);
+						if (client_buffer[client].write(data) == 0)
+						{
+							report_status_message(STATUS_OVERFLOW, client);
+							client_buffer[client].end();
+						}
+						vTaskExitCritical(&myMutex);
+					}
+				}
+			}
+			else
+			{
+				//currently is wifi or BT but better to prepare both can be live
 #ifdef ENABLE_BLUETOOTH
-                if (SerialBT.hasClient() && SerialBT.available()) {
-                    client = CLIENT_BT;
-                    data = SerialBT.read();
-                    //Serial.write(data);  // echo all data to serial
-                } else {
+				if (SerialBT.hasClient() && SerialBT.available())
+				{
+					data = 0;
+					while (SerialBT.available() && data != '\n')
+					{
+						client = CLIENT_BT;
+						data = SerialBT.read();
+						//Serial.write(data);  // echo all data to serial
+						if (is_realtime_command(data))
+						{
+							execute_realtime_command(data, client);
+						}
+						else
+						{
+							vTaskEnterCritical(&myMutex);
+							if (client_buffer[client].write(data) == 0)
+							{
+								report_status_message(STATUS_OVERFLOW, client);
+								client_buffer[client].end();
+							}
+							vTaskExitCritical(&myMutex);
+						}
+					}
+				}
+				else
+				{
 #endif
 #if defined (ENABLE_WIFI) && defined(ENABLE_HTTP)  && defined(ENABLE_SERIAL2SOCKET_IN)
-                    if (Serial2Socket.available()) {
-                        client = CLIENT_WEBUI;
-                        data = Serial2Socket.read();
-                    } else {
+					if (Serial2Socket.available())
+					{
+						data = 0;
+						while (Serial2Socket.available() && data != '\n')
+						{
+							client = CLIENT_WEBUI;
+							data = Serial2Socket.read();
+							if (is_realtime_command(data))
+							{
+								execute_realtime_command(data, client);
+							}
+							else
+							{
+								vTaskEnterCritical(&myMutex);
+								if (client_buffer[client].write(data) == 0)
+								{
+									report_status_message(STATUS_OVERFLOW, client);
+									client_buffer[client].end();
+								}
+								vTaskExitCritical(&myMutex);
+							}
+						}
+					}
+					else
+					{
 #endif
 #if defined (ENABLE_WIFI) && defined(ENABLE_TELNET)
-                        if (telnet_server.available()) {
-                            client = CLIENT_TELNET;
-                            data = telnet_server.read();
-                        }
+						if (telnet_server.available())
+						{
+							data = 0;
+							while (telnet_server.available() && data != '\n')
+							{
+								client = CLIENT_TELNET;
+								data = telnet_server.read();
+								if (is_realtime_command(data))
+								{
+									execute_realtime_command(data, client);
+								}
+								else
+								{
+									vTaskEnterCritical(&myMutex);
+									if (client_buffer[client].write(data) == 0)
+									{
+										report_status_message(STATUS_OVERFLOW, client);
+										client_buffer[client].end();
+									}
+									vTaskExitCritical(&myMutex);
+								}
+							}
+						}
 #endif
 #if defined (ENABLE_WIFI) && defined(ENABLE_HTTP)  && defined(ENABLE_SERIAL2SOCKET_IN)
-                    }
+					}
 #endif
 #ifdef ENABLE_BLUETOOTH
-                }
+				}
 #endif
-            }
-            // Pick off realtime command characters directly from the serial stream. These characters are
-            // not passed into the main buffer, but these set system state flag bits for realtime execution.
-            if (is_realtime_command(data))
-                execute_realtime_command(data, client);
-            else {
-                vTaskEnterCritical(&myMutex);
-                client_buffer[client].write(data);
-                vTaskExitCritical(&myMutex);
-            }
-        }  // if something available
-        COMMANDS::handle();
+			}
+			// Pick off realtime command characters directly from the serial stream. These characters are
+			// not passed into the main buffer, but these set system state flag bits for realtime execution.
+			//if (is_realtime_command(data))
+			//{
+			//    execute_realtime_command(data, client);
+			//}
+			//else
+			//{
+			//    vTaskEnterCritical(&myMutex);
+			//    if(client_buffer[client].write(data) == 0)
+			//    {
+			//        report_status_message(STATUS_OVERFLOW, client);
+			//        client_buffer[client].end();
+			//    }
+			//    vTaskExitCritical(&myMutex);
+			//}
+		}  // if something available
+		COMMANDS::handle();
 #ifdef ENABLE_WIFI
-        wifi_config.handle();
+		wifi_config.handle();
 #endif
 #ifdef ENABLE_BLUETOOTH
-        bt_config.handle();
+		bt_config.handle();
 #endif
 #if defined (ENABLE_WIFI) && defined(ENABLE_HTTP) && defined(ENABLE_SERIAL2SOCKET_IN)
-        Serial2Socket.handle_flush();
+		Serial2Socket.handle_flush();
 #endif
-        vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
-    }  // while(true)
+		vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
+	}  // while(true)
 }
 
 void serial_reset_read_buffer(uint8_t client) {
