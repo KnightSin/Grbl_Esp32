@@ -1,105 +1,63 @@
-#include <nvs.h>
-#include <nvs_flash.h>
-#include "../grbl.h"
+/*
+	XBoard.cpp
+
+	copyright (c) 2021	Xie Bin @Knight_sin
+
+	Grbl is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Grbl is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "../src/Grbl.h"
 
 void machine_init()
 {
-	pinMode(13, OUTPUT);
-	digitalWrite(13, HIGH);
-
-    grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Machine Type: %s", machineType->getStringValue());
-
-	// machine_settings_load();
-	// switch (MACHINE_TYPE)
-	// {
-	// case MACHINE_COREXY: grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Machine Type: CoreXY"); break;
-	// case MACHINE_XYZ: grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Machine Type: XYZ"); break;
-	// default: grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_ERROR, "Incorrect Machine Type"); break;
-	// }
-	// grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Limits Enable: X %s, Y %s, Z %s",
-	// 	LIMIT_ENABLE_MASK & 0x01 ? "Enable" : "Disable",
-	// 	LIMIT_ENABLE_MASK & 0x02 ? "Enable" : "Disable",
-	// 	LIMIT_ENABLE_MASK & 0x04 ? "Enable" : "Disable"
-	// 	);
-	// grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "Limits Type: X %s, Y %s, Z %s",
-	// 	LIMIT_TYPE_MASK & 0x01 ? "NO" : "NC",
-	// 	LIMIT_TYPE_MASK & 0x02 ? "NO" : "NC",
-	// 	LIMIT_TYPE_MASK & 0x04 ? "NO" : "NC"
-	// );
+	pinMode(STAT_LED_PIN, OUTPUT);
+	digitalWrite(STAT_LED_PIN, HIGH);
 }
 
-// void machine_settings_save()
-// {
-// 	nvs_handle handle;
-// 	nvs_open("SPINDLE_TYPE", NVS_READWRITE, &handle);
-// 	nvs_set_u8(handle, "SPINDLE_TYPE", SPINDLE_TYPE);
-// 	nvs_close(handle);
-
-// 	nvs_open("MACHINE_TYPE", NVS_READWRITE, &handle);
-// 	nvs_set_u8(handle, "MACHINE_TYPE", MACHINE_TYPE);
-// 	nvs_close(handle);
-
-// 	nvs_open("LIMIT_ENABLE", NVS_READWRITE, &handle);
-// 	nvs_set_u8(handle, "LIMIT_ENABLE", LIMIT_ENABLE_MASK);
-// 	nvs_close(handle);
-
-// 	nvs_open("LIMIT_TYPE", NVS_READWRITE, &handle);
-// 	nvs_set_u8(handle, "LIMIT_TYPE", LIMIT_TYPE_MASK);
-// 	nvs_close(handle);
-// }
-
-// void machine_settings_load()
-// {
-// 	nvs_handle handle;
-// 	// SPINDLE_TYPE
-// 	if (nvs_open("SPINDLE_TYPE", NVS_READWRITE, &handle) != ESP_OK)
-// 	{
-// 		nvs_close(handle);
-// 		machine_settings_save();
-// 		grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "SPINDLE_TYPE Not Builded");
-// 	}
-// 	else
-// 	{
-// 		nvs_get_u8(handle, "SPINDLE_TYPE", &SPINDLE_TYPE);
-// 		nvs_close(handle);
-// 	}
-
-// 	// MACHINE_TYPE
-// 	if (nvs_open("MACHINE_TYPE", NVS_READWRITE, &handle) != ESP_OK)
-// 	{
-// 		nvs_close(handle);
-// 		machine_settings_save();
-// 		grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "MACHINE_TYPE Not Builded");
-// 	}
-// 	else
-// 	{
-// 		nvs_get_u8(handle, "MACHINE_TYPE", &MACHINE_TYPE);
-// 		nvs_close(handle);
-// 	}
-
-// 	// LIMIT_ENABLE_MASK
-// 	if (nvs_open("LIMIT_ENABLE", NVS_READWRITE, &handle) != ESP_OK)
-// 	{
-// 		nvs_close(handle);
-// 		machine_settings_save();
-// 		grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "LIMIT_MASK Not Builded");
-// 	}
-// 	else
-// 	{
-// 		nvs_get_u8(handle, "LIMIT_ENABLE", &LIMIT_ENABLE_MASK);
-// 		nvs_close(handle);
-// 	}
-
-// 	// LIMIT_TYPE_MASK
-// 	if (nvs_open("LIMIT_TYPE", NVS_READWRITE, &handle) != ESP_OK)
-// 	{
-// 		nvs_close(handle);
-// 		machine_settings_save();
-// 		grbl_msg_sendf(CLIENT_SERIAL, MSG_LEVEL_INFO, "LIMIT_TYPE Not Builded");
-// 	}
-// 	else
-// 	{
-// 		nvs_get_u8(handle, "LIMIT_TYPE", &LIMIT_TYPE_MASK);
-// 		nvs_close(handle);
-// 	}
-// }
+#if defined(MACRO_BUTTON_0_PIN) || defined(MACRO_BUTTON_1_PIN) || defined(MACRO_BUTTON_2_PIN)
+/*
+  options.  user_defined_macro() is called with the button number to
+  perform whatever actions you choose.
+*/
+void user_defined_macro(uint8_t index) {
+	switch (index) {
+#ifdef MACRO_BUTTON_0_PIN
+	case 0:
+		// grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "0");
+		// WebUI::inputBuffer.push("[ESP220]/file0.gcode\r");  // run SD card file0
+		break;
+#endif
+#ifdef MACRO_BUTTON_1_PIN
+	case 1:
+		// grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "1");
+		// WebUI::inputBuffer.push("[ESP220]/file1.gcode\r");  // run SD card file1/
+		break;
+#endif
+#ifdef MACRO_BUTTON_2_PIN
+	case 2:
+		// grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "2");
+		// WebUI::inputBuffer.push("[ESP220]/file2.gcode\r");  // run SD card file2
+		break;
+#endif
+#ifdef MACRO_BUTTON_3_PIN
+	case 3:
+		// grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "3");
+		// WebUI::inputBuffer.push("[ESP220]/file3.gcode\r");  // run SD card file3
+		break;
+#endif
+	default:
+		break;
+	}
+}
+#endif
