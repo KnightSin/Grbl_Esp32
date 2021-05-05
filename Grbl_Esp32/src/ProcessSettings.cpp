@@ -591,6 +591,7 @@ Error do_command_or_setting(const char* key, char* value, WebUI::AuthenticationL
 }
 
 Error system_execute_line(char* line, WebUI::ESPResponseStream* out, WebUI::AuthenticationLevel auth_level) {
+    
     remove_password(line, auth_level);
 
     char* value;
@@ -623,6 +624,7 @@ Error system_execute_line(char* line, WebUI::ESPResponseStream* out, WebUI::Auth
     // empty string - $xxx= with nothing after
     // non-empty string - [ESPxxx]yyy or $xxx=yyy
     return do_command_or_setting(key, value, auth_level, out);
+    //return Error::Ok;
 }
 
 Error system_execute_line(char* line, uint8_t client, WebUI::AuthenticationLevel auth_level) {

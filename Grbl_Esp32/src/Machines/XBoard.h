@@ -41,11 +41,11 @@
 #endif
 
 // Board features
-// #define CoreXY
+#define CoreXY
 #ifndef CoreXY
-#    define CUSTOM_CODE_FILENAME "Custom/XBoard.cpp"
+#    define CUSTOM_CODE_FILENAME "../Custom/XBoard.cpp"
 #else
-#    define CUSTOM_CODE_FILENAME "Custom/XBoard_CoreXY.cpp"
+#    define CUSTOM_CODE_FILENAME "../Custom/XBoard_CoreXY.cpp"
 #    define USE_KINEMATICS      // there are kinematic equations for this machine
 #    define USE_FWD_KINEMATICS  // report in cartesian
 #    define USE_MACHINE_INIT    // There is some custom initialization for this machine
@@ -136,6 +136,8 @@
 #    define STEPPERS_DISABLE_PIN GPIO_NUM_12
 
 #    define SPINDLE_OUTPUT_PIN GPIO_NUM_17
+
+#    define LASER_OUTPUT_PIN SPINDLE_OUTPUT_PIN
 
 #    define USE_MACHINE_INIT
 

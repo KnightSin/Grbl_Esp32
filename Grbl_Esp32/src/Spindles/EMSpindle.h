@@ -38,6 +38,7 @@ namespace Spindles {
         void        config_message() override;
         uint32_t    set_rpm(uint32_t rpm) override;
         void        set_state(SpindleState state, uint32_t rpm) override;
+        void        stop() override;
         virtual ~EM() {}
     private:
         bool _pwm_invert;

@@ -1,0 +1,1 @@
+espefuse.exe -p COM7 set_flash_voltage 3.3V

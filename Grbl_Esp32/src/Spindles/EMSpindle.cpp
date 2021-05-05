@@ -144,4 +144,9 @@ namespace Spindles {
 
         sys.report_ovr_counter = 0;  // Set to report change immediately
     }
+
+    void EM::stop()
+    {
+        vTaskDelete(EM_Hold_TaskHandle);
+    }
 }
