@@ -102,7 +102,7 @@ void serial_init() {
     // after WebUI attaches.
     xTaskCreatePinnedToCore(serialCheckTask,    // task
                             "serialCheckTask",  // name for task
-                            4096,               // size of task stack
+                            8192,               // size of task stack
                             NULL,               // parameters
                             1,                  // priority
                             &serialCheckTaskHandle,

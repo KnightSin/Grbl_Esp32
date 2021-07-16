@@ -41,7 +41,7 @@
 #endif
 
 // Board features
-#define CoreXY
+// #define CoreXY
 #ifndef CoreXY
 #    define CUSTOM_CODE_FILENAME "../Custom/XBoard.cpp"
 #else
@@ -112,7 +112,6 @@
 // #    define X_DRIVER_ADDRESS 0  // TMC 2208 does not use address, this field is 0
 // #    define DEFAULT_X_MICROSTEPS 16
 
-
 // #define TRINAMIC_DAISY_CHAIN
 // #define TRINAMIC_RUN_MODE           TrinamicMode :: CoolStep
 // #define TRINAMIC_HOMING_MODE        TrinamicMode :: CoolStep
@@ -152,3 +151,9 @@
 #    define SPINDLE_TYPE SpindleType::Servo
 
 #endif
+
+// #define GRBL_SPI_SS GPIO_NUM_15
+// #define GRBL_SPI_MOSI GPIO_NUM_12
+// #define GRBL_SPI_MISO GPIO_NUM_13
+// #define GRBL_SPI_SCK GPIO_NUM_14
+// #define GRBL_SPI_FREQ 4000000
